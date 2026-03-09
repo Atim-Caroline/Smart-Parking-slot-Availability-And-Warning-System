@@ -7,7 +7,6 @@ This project implements a **Smart Parking Detection System** using an **HC-SR04 
 
 It is a simple embedded systems project that demonstrates **distance sensing, real-time feedback, and basic automation for parking assistance**.
 
----
 
 ## Features
 - Detects distance using the **HC-SR04 ultrasonic sensor**
@@ -19,7 +18,6 @@ It is a simple embedded systems project that demonstrates **distance sensing, re
   - **Red LED + Buzzer** → Slot occupied / vehicle very close
 - Serial monitor displays **real-time distance measurements**
 
----
 
 ## Hardware Requirements
 - Arduino Uno (or compatible board)
@@ -33,7 +31,7 @@ It is a simple embedded systems project that demonstrates **distance sensing, re
 - Breadboard
 - Jumper wires
 
----
+
 
 ## Pin Configuration
 
@@ -46,7 +44,7 @@ It is a simple embedded systems project that demonstrates **distance sensing, re
 | Red LED | 10 |
 | Buzzer | 9 |
 
----
+
 
 ## System Logic
 
@@ -58,7 +56,6 @@ The system categorizes parking slot status based on distance:
 | 20–40 cm | Vehicle Approaching | Yellow LED |
 | ≤ 20 cm | Slot Occupied / Very Close | Red LED + Buzzer |
 
----
 
 ## How It Works
 
