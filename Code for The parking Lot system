@@ -1,0 +1,64 @@
+// HC-SR04 pins
+const int trigPin = 7;
+const int echoPin = 6;
+
+// LEDs and buzzer
+const int greenLED = 12;   // Free
+const int yellowLED = 11;  // Approaching
+const int redLED = 10;     // Occupied / very close
+const int buzzer = 9;      // Buzzer alert
+
+long duration;
+int distance;
+
+void setup() {
+  Serial.begin(9600);
+
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+
+  pinMode(greenLED, OUTPUT);
+  pinMode(yellowLED, OUTPUT);
+  pinMode(redLED, OUTPUT);
+  pinMode(buzzer, OUTPUT);
+}
+
+void loop() {
+  // Trigger the sensor
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  // Read the echo
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2; // cm
+
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  // Clear all LEDs and buzzer first
+  digitalWrite(greenLED, LOW);
+  digitalWrite(yellowLED, LOW);
+  digitalWrite(redLED, LOW);
+  noTone(buzzer);
+
+  // LED + buzzer logic
+  if (distance > 40) {
+    // Slot free
+    digitalWrite(greenLED, HIGH);
+  } 
+  else if (distance > 20 && distance <= 40) {
+    // Car approaching
+    digitalWrite(yellowLED, HIGH);
+  } 
+  else if (distance <= 20) {
+    // Very close / slot occupied
+    digitalWrite(redLED, HIGH);
+    tone(buzzer, 2000);  // beep when car is very close
+  }
+
+  delay(200); // small delay
+}
