@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Manage Equipment List</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Aptos:wght@400;700&display=swap');
+:root{
+  --ink:#1a2329; --paper:#f4f8fa; --line:#cedce3;
+  --accent:#3b6278; --accent-dark:#243f50;
+  --muted:#697e8a; --warn:#c24b4b;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Aptos','Segoe UI','Calibri',Arial,sans-serif;background:#c3d4de;color:var(--ink);min-height:100vh;}
+.app-bar{background:var(--accent-dark);color:#e9f1f5;padding:10px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(24,38,48,.15);}
+.app-bar .brand{display:flex;align-items:center;gap:10px;}
+.app-bar .brand img{height:36px;width:auto;border-radius:6px;}
+.app-bar h1{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e9f1f5;}
+.page{padding:30px;}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:24px;box-shadow:0 8px 24px rgba(24,38,48,.08);}
+.toolbar{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:20px;}
+.toolbar .controls{display:flex;gap:10px;flex-wrap:wrap;}
+input[type="text"],input[type="number"],select{padding:10px;border:1px solid var(--line);border-radius:6px;font-family:inherit;font-size:13px;background:#fff;width:100%;}
+button{font-family:inherit;font-size:12px;padding:8px 14px;border-radius:6px;border:1px solid var(--line);background:var(--accent-dark);color:#fff;cursor:pointer;}
+button:hover{background:var(--accent);}
+.btn-secondary{background:transparent;color:var(--accent-dark);border-color:var(--line);}
+.btn-secondary:hover{background:#ddeaf0;}
+.btn-delete{background:#b64b4b;border-color:#b64b4b;}
+.btn-delete:hover{background:#9e3f3f;}
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);} 
+th,td{border:1px solid var(--line);padding:10px;text-align:left;font-size:12px;}
+th{background:#e9f1f5;color:var(--accent-dark);}
+.status-note{font-size:12px;color:var(--muted);margin-top:10px;}
+@media(max-width:640px){
+  .page{padding:16px;}
+  .panel{padding:16px;}
+}
+</style>
+</head>
+<body>
+<div class="app-bar">
+  <div class="brand">
+    <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBw8SEBUQEhMPFREVEBYPFRcVGA8QEg8VFRcaGBUWGBUYHSggGBslHRsYITMtJSkrLi4wGB8zODMtNygtLisBCgoKDg0OGxAQGi0lHyUrLy0tLS01LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLf/AABEIAMgAyAMBEQACEQEDEQH/xAAcAAEBAAMBAQEBAAAAAAAAAAAABwQFBgECAwj/xABEEAABAwECBwoNAwQCAwAAAAABAAIDBAURBgcSITFBgRMiMjRRYXGRstIUFhcjQlJTVHN0oaOxcpLBYoLC0aLwJEPh/8QAGwEBAAIDAQEAAAAAAAAAAAAAAAEFAwQGAgf/xAAsEQABAwIFBAEEAwEBAAAAAAAAAQIDBBEFEiExURQVMkETIjNhcQZCUiOB/9oADAMBAAIRAxEAPwC4oAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAhAQk8QHqEBCQgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCA8QH5VNTHG0vkc1rRpLiGgbSpRqrseXPRu5zFdjBs+M3NdJIf6G5ut1wK2m0Ui+jTfiESbKYJxnUvsaj7feWXtzuTD3NvA8p9L7Gf7feU9ufyO5s4HlPpfYz/AG+8nbn8jubOB5T6X2M/2+8nbn8jubOB5T6X2M/2+8nbn8jubOB5T6X2M/2+8nbn8jubOB5T6X2M/wBvvJ25/I7mzgeU+l9jP9vvJ25/I7mzgeU+l9jP9vvJ25/I7mzgeU+l9jP9vvJ25/I7mzgeU+l9jP8Ab7ydufyO5s4HlPpfYz/b7ydufyO5s4HlPpfYz/b7ydufyO5s4HlPpfYz/AG+8nbn8jubOB5T6X2M/2+8nbn8jubOB5T6X2M/2+8nbn8jubOB5T6X2M/2+8nbn8jubOB5T6X2M/wBvvKO3v5HcmcHZUFUJYmSgEB8bZADdeA4Ai/rWg9LLYsY3ZkuZFy8nsKSPZz+FmFEVEz1pnDeM/wAnHU38/jZp6d0y/g1amqbCmu5ILYtioqn5czy7kGhjOZrdSuooGxpZCglndIt3GAsxgCkBAEAQBNNh+Qo0J1UKRsEICAIAgCi5O4TRSNggCkaIEAQBAFC7EpuXzBniVP8ALRdgLmpfNf2dVB9tDZLGZtjDtavZTwvnfwWNLuk6h0k3DavcbFe6xjlkRjbkHtS0JKiZ00hvc438zRqA5guihjRjbIcvPIsjrmKshi0CkBAEAQGzwcso1VSyC8gOJJIuOSGgkn6XbVhnl+OPMZ6aH5JMp3EuK+P0ah4POwOH0IVc3El4LN2Fov8AY5fCDAyrpWmQ5MkQ0uZfvf1N1D6LbhrWP0NKehfHqc4tzfY0k/IQBAEAUA2VmWBWVAvhhkc31szWc++dcCsL6ljN1M8dNI/xQ2MmAtpgX7hf0PhJ7SxdbCvszLQzp6NLXWdPCbpY5GHVlNLb+g6Cs7Jmv2U1pYXs3MZZDHpYKQEAQBQuxKbl8wZ4lT/LRdgLmpfNf2dVB9tDZLGZjgcbVcWwxQA8N5e7oZdcDtP0Vjh7LvVSqxOSzUbyS9XJRhAEAQBAEBQsUtn3vlqSMzQIW9Lt878N61VYjJs0uMLi3cUxVRcHxIwEEEAgi4g5wQdKlNCHJfQg2ElAIKuaEcFshyeZpzt+hC6KnfmiRxy9THklVDWrOYAgChdAh32AuBYkDampHm9McZ/9n9Th6vNr6NNZWVeVcjC2oqK6Z3bFNYwAAAAAC4AZgAFUqt9S6Rtksh9oCZYxcKg8uo4bi0G6V1wN5HoN5LtZVrRUyp9bv/ClrqpHXjaT5Wv6KlNgsMlRHHo9Tdp6Con8G3C" alt="HARISS International" />
+    <h1>Equipment Management/h1>
+  </div>
+  <div id="appBarRight"></div>
+</div>
+
+<div class="page">
+  <div class="panel">
+    <h2 style="font-size:22px;color:var(--accent-dark);margin-bottom:20px;">Equipment List</h2>
+
+    <div class="toolbar">
+      <div class="controls" style="flex:1;min-width:280px;">
+        <input type="text" id="searchName" placeholder="Search employee..." onkeyup="searchItems()" style="width:250px;">
+        <select id="statusFilter" onchange="filterItems()">
+          <option value="all">All</option>
+          <option value="Returned">Returned</option>
+          <option value="Pending">Pending</option>
+        </select>
+      </div>
+      <div class="controls">
+        <button onclick="saveChanges()">Save Changes</button>
+        <button class="btn-secondary" onclick="goBackHome()">← Back</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Employee</th>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="equipmentTable"></tbody>
+      </table>
+    </div>
+
+    <div class="status-note">Changes are saved in your browser using localStorage and will remain after refresh.</div>
+  </div>
+</div>
+
+<script>
+var STORAGE_KEY = 'harissEquipmentList';
+var equipmentData = loadStoredEquipment();
+
+function loadStoredEquipment() {
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      var parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length) {
+        return parsed;
+      }
+    }
+  } catch (err) {
+    console.warn('Unable to load stored equipment data:', err);
+  }
+
+  return [
+    { employee: 'John Doe', item: 'Laptop', qty: 1, status: 'Returned' },
+    { employee: 'Mary', item: 'Mouse', qty: 2, status: 'Pending' }
+  ];
+}
+
+function saveStoredEquipment() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(equipmentData));
+  } catch (err) {
+    console.warn('Unable to save equipment data:', err);
+  }
+}
+
+function loadEquipment() {
+  var table = document.getElementById('equipmentTable');
+  table.innerHTML = '';
+
+  equipmentData.forEach(function(item, index) {
+    table.innerHTML += '<tr>'
+      + '<td><input type="text" data-index="' + index + '" data-field="employee" value="' + escAttr(item.employee) + '"></td>'
+      + '<td><input type="text" data-index="' + index + '" data-field="item" value="' + escAttr(item.item) + '"></td>'
+      + '<td><input type="number" min="0" data-index="' + index + '" data-field="qty" value="' + escAttr(item.qty) + '"></td>'
+      + '<td><select data-index="' + index + '" data-field="status">'
+      + '<option value="Returned" ' + (item.status === 'Returned' ? 'selected' : '') + '>Returned</option>'
+      + '<option value="Pending" ' + (item.status === 'Pending' ? 'selected' : '') + '>Pending</option>'
+      + '</select></td>'
+      + '<td><button class="btn-delete" onclick="deleteItem(' + index + ')">Delete</button></td>'
+      + '</tr>';
+  });
+}
+
+function saveChanges() {
+  var rows = document.querySelectorAll('#equipmentTable tr');
+  rows.forEach(function(row, index) {
+    var employee = row.querySelector('[data-field="employee"]').value.trim();
+    var item = row.querySelector('[data-field="item"]').value.trim();
+    var qty = Number(row.querySelector('[data-field="qty"]').value);
+    var status = row.querySelector('[data-field="status"]').value;
+
+    if (!employee || !item) {
+      return;
+    }
+
+    equipmentData[index] = {
+      employee: employee,
+      item: item,
+      qty: isNaN(qty) ? 0 : qty,
+      status: status
+    };
+  });
+
+  saveStoredEquipment();
+  loadEquipment();
+  alert('Equipment list saved successfully.');
+}
+
+function deleteItem(index) {
+  if (confirm('Delete this item?')) {
+    equipmentData.splice(index, 1);
+    saveStoredEquipment();
+    loadEquipment();
+  }
+}
+
+function searchItems() {
+  var search = document.getElementById('searchName').value.toLowerCase();
+  var rows = document.querySelectorAll('#equipmentTable tr');
+
+  rows.forEach(function(row) {
+    var name = row.querySelector('[data-field="employee"]').value.toLowerCase();
+    row.style.display = name.includes(search) ? '' : 'none';
+  });
+}
+
+function filterItems() {
+  var value = document.getElementById('statusFilter').value;
+  var rows = document.querySelectorAll('#equipmentTable tr');
+
+  rows.forEach(function(row) {
+    var status = row.querySelector('[data-field="status"]').value;
+    row.style.display = (value === 'all' || status === value) ? '' : 'none';
+  });
+}
+
+function goBackHome() {
+  window.location.href = 'index.html';
+}
+
+function escAttr(s) {
+  if (s === null || s === undefined) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+loadEquipment();
+</script>
+</body>
+</html>
